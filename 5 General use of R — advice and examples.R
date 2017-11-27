@@ -31,3 +31,65 @@ subdata = subset(MyRData, date >= start.date & date <= end.date, select = c(date
 subdata = subset(MyRData, format(date, '%Y') %in% c(1998, 2005)) #make the subset the entries from 1998 and from 2005 only
 subdata = subset(MyRData, format(date, '%A') %in% c('Saturday', 'Sunday')) #make the subset only data from weekends
 
+test.dat = data.frame(lond.nox = 1, lond.no2 = 3, nox.back = 4, no2.back = 1)
+test.dat
+
+grep(pattern = 'nox', names(test.dat)) #returns [1]  1  3 (the values in the column with 'nox' in the name)
+
+sub.dat = test.dat[ , grep(patter = 'nox', names(test.dat))] #the above, done in one line,saves as a variable
+sub.dat
+
+timePlot(MyRData, pollutant = names(MyRData)[grep(pattern = 'pm', names(MyRData))])
+#timePlot function from OpenAir, one for each string in MyRData with 'pm' in the title
+
+path.files = 'D:\\temp\\' #define variable as the directory with multiple files you wish to be read
+test.data = lapply(list.files(path = path.files, pattern = '.csv'),function(.file)read.csv(paste(path.files,  ''), header = TRUE))
+test.data= do.call(rbindtest.data) #in theory this would open all the csvs in the direcory. Since we don't have this data, we can't
+
+airpol = data.frame(date = seq(as.POSIXct('2007-01-01'), by = 'hours', length = 24), nox = 1:24, so2 = 1:24)
+met = data.frame(date = seq(as.POSIXct('2007-01-01'), by = 'hours', length = 24), ws = rep(1,24), wd = rep(270, 24))
+#make up 2 files, one for air pollution, one for meteorological. Same days and time inetrvals, different measurements
+
+test.data = merge(airpol, met) # merges the two files into one, (i.e, 2 chemicals and 2 meteorological values against one date column)
+#only merges where there are data in both files. e.g. if one file had 2 hour and the other 12, you'd only get 2 hours merged
+test.data = merge(airpol, met, all = TRUE) #would merge ALL values, even if one was missing. In this case, listed as NA.
+
+site1 = airpol
+site2 = airpol
+
+both = merge(site1, site2, by = 'date', suffixes = c('.st1', '.st2'), all = TRUE)
+#two sites both with the same column titles, want to merge so nox and so2 of both sites displayed together
+
+year1 = data.frame(date = seq(as.POSIXct('2007-01-01'), by = 'hours', length = 24), nox = 1:24, so2 = 1:24)
+year2 = data.frame(date = seq(as.POSIXct('2008-01-01'), by = 'hours', length = 24), nox = 1:24, so2 = 1:24, pm10 = 1:24)
+test.data = merge(year1, year2, all = TRUE)
+#merges 2 years of data where 2nd year has new measurement. Fills in where values are absent with 'NA'
+
+head(test.data) #see 3rd column filled with NA
+tail(test.data) #see 3 columns with values
+
+airpol = airpol[-c(2,3 ), ] #select all but record 2 and 3
+#NB repeating these three lines causes lined 4 and 5 to be removed, then 6 adn 7, etc
+all.dates = data.frame(date = seq(as.POSIXct('2007-01-01'), by = 'hours', length = 24))
+test.data = merge(all.dates, airpol, all = TRUE)
+
+library(zoo) #can't find package called zoo... makes the next bit of the tutorial rather hard...
+#something about filling in missing values instead of replacing with NA, presumably so maths can be done...
+#can interpolate i.e. guess likely values and input them. seems legit...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
