@@ -15,5 +15,19 @@ x[x==18] #specifies values of 18
 rev(x) #reverses the order
 x[x == 2] = 0 #replaces all instances of the value 2 with 0. Can use other operators (<> etc)
 
-subdata = mydata[1:500, ] #define a subset of the full data, comprising of the first 500 entries
+subdata = MyRData[1:500, ] #define a subset of the full data, comprising of the first 500 entries
 nrow(subdata) #returns 500 (the number of rows in the subset)
+
+subdata = subset(MyRData, select = c(nox, no2)) #'define subdata as a subset of MyRData, selecting vectors by concatenating 'nox' and 'no2' entries'
+subdata = subset(MyRData, nox > 600, select = c(nox, no2, date)) #defines subdata similarly, but only values greater than 600 for nox, including a date entry
+
+#next bit is date conversion to POSIXct, Will already helped me do this, but I'll note it for completeness
+
+start.date = as.POSIXct('2004-01-01 00:00', tz = 'UTC')
+end.date = as.POSIXct('2004-12-31 23:00', tz = 'UTC')
+subdata = subset(MyRData, date >= start.date & date <= end.date, select = c(date, nox, no2))
+#define start and end dates in POSIXct format, pick timezone. subdata as all datapoints between the two chosen dates
+
+subdata = subset(MyRData, format(date, '%Y') %in% c(1998, 2005)) #make the subset the entries from 1998 and from 2005 only
+subdata = subset(MyRData, format(date, '%A') %in% c('Saturday', 'Sunday')) #make the subset only data from weekends
+
