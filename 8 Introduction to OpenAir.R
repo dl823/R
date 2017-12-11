@@ -161,15 +161,39 @@ trellis.last.object() +
   layer(poly.na(x, ifelse(y < 40, NA, y), x, rep(40, length(x)),
                 col = 'red', alpha = 1), rows = 3)
 
+arc = function(theta1 = 30, theta2 = 60, theta3 = theta1, theta4 = theta2, lower = 1, upper = 10){
+  if (theta2 < theta1) {
+    ang1 = seq(theta1, 360, length = abs(theta2 - theta1))
+    ang2 = seq(0, theta2, length = abs(theta2 - theta1))
+    angles.low = c(ang1, ang2)
+    ang1 = seq(theta1, 360, length = abs(theta4 - theta3))
+    ang2 = seq(0, theta2, length = abs(theta4 - theta3))
+    angles.high = c(ang1, ang2)
+  }else{
+    angles.low = seq(theta1, theta2, length = abs(theta2 - theta1))
+    angles.high = seq(theta3, theta4, length = abs(theta4 - theta3))
+  }
+  x1 = lower * sin(pi * angles.low / 180)
+  y1 = lower * cos(pi * angles.low / 180)
+  x2 = rev(upper * sin(pi * angles.high / 180))
+  y2 = rev(upper * cos(pi * angles.high / 180))
+  data.frame(x = c(x1, x2), y = c(y1, y2))
+}
+#define function 'arc' for co-ordinates in a polar plot
 
+polarPlot(mydata, pollutant = 'so2', col = 'jet')
+trellis.last.object() + layer(ltext(-12, -12, 'A', cex = 2)) #add 'A' at point (-12, -12)
+trellis.last.object() + layer(ltext(10, 2, 'B', cex = 2, col = 'white')) #add a white 'B' at point (10, 2)
+trellis.last.object() + layer(lsegments(0, 0, -11.5, -11.5, lty = 5)) #add an arc to show 'area of interest'
+trellis.last.object() + layer(lpolygon(x = arc(theta1 = 60, theta2 = 120, lower = 2, upper = 15)$x,
+                                      y = arc(theta1 = 60, theta2 = 120, lower = 2, upper = 15)$y,
+                                      lty = 1, lwd = 2)) #add a sector over an area of interest
 
+timeVariation(mydata)
+library(grid)
+grid.locator(unit = 'npc') #allows you to click on plot to get a co-ordinate (0,0) btottom left, (1,1) top right
 
-
-
-################################Resume GDrive#############################
-
-
-
-
-
-
+timeVariation(mydata)
+grid.text(x = 0.755, y = 0.525, label = 'yoohooo!', gp = gpar(cex = 2, font = 2, col = 'blue'))
+grid.lines(x = c(0.735, 0.760), y = c(0.560, 0.778), arrow = arrow()) #add an arrow
+grid.text(x = 0.736, y = 0.560, label = 'maximum', just = 'left') #add next next to the arrow
